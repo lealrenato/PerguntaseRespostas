@@ -1,0 +1,19 @@
+body{
+    background-color: #eceff1 !important;
+}
+
+.formulario-pergunta{
+margin-top: 5vh;
+
+}
+ .brand{
+margin-left: 1ch;
+ }
+
+ .container-perguntas{
+    padding-bottom: 10px;
+ }
+
+ .badgeclass{
+    margin-right: 5px;
+ }
