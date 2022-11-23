@@ -26,19 +26,19 @@ app.use(bodyParser.json()); //para api
 
 //rotas
 app.get("/", (req, res) => {
-  Pergunta.findAll({ raw: true,order:[
-[
-  'id','DESC'// ASC = ascendente  ||  DESC = descendente
-]
-
-  ] 
-}).then(perguntas => {
-    res.render("index",{
-      perguntas: perguntas
+  Pergunta.findAll({
+    raw: true,
+    order: [
+      [
+        "id",
+        "DESC", // ASC = ascendente  ||  DESC = descendente
+      ],
+    ],
+  }).then((perguntas) => {
+    res.render("index", {
+      perguntas: perguntas,
     });
-    
   });
-  
 });
 
 app.get("/perguntar", (req, res) => {
@@ -59,17 +59,40 @@ app.post("/salvarpergunta", (req, res) => {
 app.get("/pergunta/:id", (req, res) => {
   var id = req.params.id;
   Pergunta.findOne({
-    where: {id: id}
-  }).then(pergunta =>{
-    
+    where: { id: id },
+  }).then((pergunta) => {
     if (pergunta != undefined) {
-      res.render("pergunta",{pergunta:pergunta});
+      Resposta.findAll({
+        raw: true,
+        order: [
+          [
+            "id",
+            "ASC", // ASC = ascendente  ||  DESC = descendente
+          ],
+        ],
+        where: { perguntaId: pergunta.id },
+      }).then((respostas) => {
+        res.render("pergunta", {
+          pergunta: pergunta,
+          respostas: respostas,
+        });
+      });
     } else {
       res.redirect("/");
     }
-
   });
-})
+});
+
+app.post("/responder", (req, res) => {
+  var corpo = req.body.corpo;
+  var perguntaId = req.body.pergunta;
+  Resposta.create({
+    corpo: corpo,
+    perguntaId: perguntaId,
+  }).then(() => {
+    res.redirect("/pergunta/" + perguntaId);
+  });
+});
 
 app.listen(4000, () => {
   console.log("app rodando");
